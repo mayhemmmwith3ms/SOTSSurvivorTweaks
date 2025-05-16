@@ -40,6 +40,8 @@ namespace MSOTSSurvivorTweaks
 			On.EntityStates.Chef.YesChef.OnEnter += YesChef_OnEnter;
 			On.EntityStates.Chef.OilSpillBase.OnExit += OilSpillBase_OnExit;
 			On.EntityStates.FalseSon.MeridiansWillTeleport.FixedUpdate += MeridiansWillTeleport_FixedUpdate;
+			On.EntityStates.FalseSon.LaserFatherCharged.OnEnter += LaserFatherCharged_OnEnter;
+			On.EntityStates.Seeker.UnseenHand.OnEnter += UnseenHand_OnEnter;
 
 			//:adrenaline:
 			IL.EntityStates.Chef.Glaze.FireGrenade += ILGlazeWeakenRemoval;
@@ -49,8 +51,11 @@ namespace MSOTSSurvivorTweaks
 		}
 
 		#region config
+		public const string SeekerTweaksConfigSection = "Seeker Tweaks";
 		public const string ChefTweaksConfigSection = "Chef Tweaks";
 		public const string FalseSonTweaksConfigSection = "False Son Tweaks";
+
+		public static ConfigEntry<bool> Config_SeekerReduceUnseenHandZoomout { get; set; }
 
 		public static ConfigEntry<bool> Config_ChefCleaverTweaks { get; set; }
 
@@ -70,8 +75,17 @@ namespace MSOTSSurvivorTweaks
 
 		public static ConfigEntry<bool> Config_FalseSonMeridiansWillCameraJumpFix { get; set; }
 
+		public static ConfigEntry<bool> Config_FalseSonReduceChargedLaserFatherZoomout { get; set; }
+
 		public void BindConfigs()
 		{
+			Config_SeekerReduceUnseenHandZoomout = Config.Bind(
+				SeekerTweaksConfigSection,
+				"Reduce Unseen Hand Zoomout",
+				true,
+				"Reduces the zoomout while targeting Unseen Hand."
+			);
+
 			Config_ChefCleaverTweaks = Config.Bind(
 				ChefTweaksConfigSection,
 				"Dice Tweaks",
@@ -134,7 +148,14 @@ namespace MSOTSSurvivorTweaks
 				FalseSonTweaksConfigSection,
 				"Meridians Will Camera Lerp Fix",
 				true,
-				"Fixes the jarring camera movement during the Meridian's Will teleport ability."
+				"Fixes the jarring camera movement at the start of the Meridian's Will teleport ability."
+			);
+
+			Config_FalseSonReduceChargedLaserFatherZoomout = Config.Bind(
+				FalseSonTweaksConfigSection,
+				"Remove Laser of the Father Zoomout",
+				true,
+				"Removes the zoomout while using Laser of the Father."
 			);
 		}
 
@@ -179,6 +200,27 @@ namespace MSOTSSurvivorTweaks
 		}
 		#endregion
 
+		// yes i know im setting a static field in an instance hook shut up
+		private void UnseenHand_OnEnter(On.EntityStates.Seeker.UnseenHand.orig_OnEnter orig, EntityStates.Seeker.UnseenHand self)
+		{
+			if (Config_SeekerReduceUnseenHandZoomout.Value)
+			{
+				EntityStates.Seeker.UnseenHand.abilityAimType = (int)CameraTargetParams.AimType.Aura;
+			}
+
+			orig(self);
+		}
+
+		private void LaserFatherCharged_OnEnter(On.EntityStates.FalseSon.LaserFatherCharged.orig_OnEnter orig, EntityStates.FalseSon.LaserFatherCharged self)
+		{
+			if (Config_FalseSonReduceChargedLaserFatherZoomout.Value)
+			{
+				EntityStates.FalseSon.LaserFatherCharged.abilityAimType = (int)CameraTargetParams.AimType.Standard;
+			}
+
+			orig(self);
+		}
+
 		private void MeridiansWillTeleport_FixedUpdate(On.EntityStates.FalseSon.MeridiansWillTeleport.orig_FixedUpdate orig, EntityStates.FalseSon.MeridiansWillTeleport self)
 		{
 			if (Config_FalseSonMeridiansWillCameraJumpFix.Value)
@@ -201,6 +243,7 @@ namespace MSOTSSurvivorTweaks
 			orig(self);
 		}
 
+		// only part of the fix, removes the camera lerp request from OnEnter
 		private void ILMeridianTeleportCameraFix(ILContext il)
 		{
 			il.WrapILHook(x =>
