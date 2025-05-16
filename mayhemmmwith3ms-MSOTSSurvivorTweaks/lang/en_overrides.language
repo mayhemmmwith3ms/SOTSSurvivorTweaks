@@ -1,0 +1,11 @@
+{
+    "strings":
+    {
+        "CHEF_PRIMARY_DESCRIPTION": "Throw a <style=cIsDamage>piercing</style> cleaver at enemies for <style=cIsDamage>180%</style> damage. Holding the attack <style=cIsDamage>doubles recall damage</style>.",
+        "CHEF_PRIMARY_BOOST_DESCRIPTION": "<style=cKeywordName>Boost</style><style=cSub>Boosting Dice throws cleavers in all directions, dealing <style=cIsDamage>360% damage</style>.",
+        "CHEF_PRIMARY_BOOST_DESCRIPTION_SKILL": "Throws cleavers in all directions, dealing <style=cIsDamage>360% damage</style>.",
+        "CHEF_UTILITY_BOOST_DESCRIPTION_SKILL": "Speed forward while spinning cutlery to deal an additional <style=cIsDamage>8x50%</style> damage per second to nearby enemies.",
+        "CHEF_UTILITY_BOOST_DESCRIPTION": "<style=cKeywordName>Boost</style><style=cSub>Boosting Roll deals an additional <style=cIsDamage>8x50%</style> damage per second to nearby enemies.",
+        "CHEF_SPECIAL_ALT1_DESCRIPTION": "Emit a blast attack dealing <style=cIsDamage>380%</style> damage, inflicting <style=cIsDamage>Ignite</style> or <style=cIsUtility>Frost</style>. <style=cIsUtility>Boosts</style> the next Skill used."
+    }
+}
