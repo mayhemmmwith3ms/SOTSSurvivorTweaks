@@ -460,7 +460,7 @@ namespace SOTSSurvivorTweaks
 			if (!Config_ChefOiledTweaks?.Value ?? false)
 				return;
 
-			if (sender.HasBuff(RoR2Content.Buffs.Weak))
+			if (sender.HasBuff(DLC2Content.Buffs.Oiled))
 			{
 				args.armorAdd -= 30f;
 				args.damageMultAdd -= 0.4f;
