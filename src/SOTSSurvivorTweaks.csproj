@@ -31,7 +31,7 @@
 	</ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)/../mayhemmmwith3ms-MSOTSSurvivorTweaks" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)/../mayhemmmwith3ms-SOTSSurvivorTweaks" />
   </Target>
   
 </Project>

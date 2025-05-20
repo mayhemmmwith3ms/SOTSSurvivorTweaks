@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MSOTSSurvivorTweaks;
+namespace SOTSSurvivorTweaks;
 internal static class Log
 {
 	private static ManualLogSource _logSource;

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MSOTSSurvivorTweaks;
+namespace SOTSSurvivorTweaks;
 public static class ModUtil
 {
 	// its sooo neccessary yepp

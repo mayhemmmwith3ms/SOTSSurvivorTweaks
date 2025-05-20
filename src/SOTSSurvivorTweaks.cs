@@ -11,12 +11,12 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace MSOTSSurvivorTweaks
+namespace SOTSSurvivorTweaks
 {
 	[BepInDependency(RecalculateStatsAPI.PluginGUID)]
 	[BepInDependency(LanguageAPI.PluginGUID)]
 	[BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-	public class MSOTSSurvivorTweaks : BaseUnityPlugin
+	public class SOTSSurvivorTweaks : BaseUnityPlugin
 	{
 		public const string PluginGUID = PluginAuthor + "." + PluginName;
 		public const string PluginAuthor = "mayhemmmwith3ms";
