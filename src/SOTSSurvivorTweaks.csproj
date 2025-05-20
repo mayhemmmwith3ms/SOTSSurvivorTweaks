@@ -27,7 +27,8 @@
 	</ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)/../mayhemmmwith3ms-SOTSSurvivorTweaks" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)/../thunderstore" />
+    <Copy SourceFiles="$(ProjectDir)/../README.md" DestinationFolder="$(ProjectDir)/../thunderstore" />
   </Target>
   
 </Project>
