@@ -13,7 +13,7 @@ using UnityEngine.AddressableAssets;
 
 namespace MSOTSSurvivorTweaks
 {
-	[BepInDependency(ItemAPI.PluginGUID)]
+	[BepInDependency(RecalculateStatsAPI.PluginGUID)]
 	[BepInDependency(LanguageAPI.PluginGUID)]
 	[BepInPlugin(PluginGUID, PluginName, PluginVersion)]
 	public class MSOTSSurvivorTweaks : BaseUnityPlugin
@@ -41,12 +41,14 @@ namespace MSOTSSurvivorTweaks
 			On.EntityStates.Chef.OilSpillBase.OnExit += OilSpillBase_OnExit;
 			On.EntityStates.FalseSon.MeridiansWillTeleport.FixedUpdate += MeridiansWillTeleport_FixedUpdate;
 			On.EntityStates.FalseSon.LaserFatherCharged.OnEnter += LaserFatherCharged_OnEnter;
+			On.EntityStates.FalseSon.MeridiansWillAim.OnEnter += MeridiansWillAim_OnEnter;
 			On.EntityStates.Seeker.UnseenHand.OnEnter += UnseenHand_OnEnter;
-
+			On.PalmBlastProjectileController.Init += PalmBlastProjectileController_Init; // who wrote this why is it outside of a namespace why doesnt it scale with level damage
 			//:adrenaline:
 			IL.EntityStates.Chef.Glaze.FireGrenade += ILGlazeWeakenRemoval;
 			IL.RoR2.HealthComponent.TakeDamageProcess += ILLunarRuinDamageMultFix;
 			IL.EntityStates.FalseSon.MeridiansWillTeleport.OnEnter += ILMeridianTeleportCameraFix;
+			IL.EntityStates.Seeker.Meditate.OnEnter += ILMeditateZoomoutTweak;
 			//IL.EntityStates.Chef.RolyPoly.StartRolyPoly += ILRollBleedRemoval;
 		}
 
@@ -55,9 +57,15 @@ namespace MSOTSSurvivorTweaks
 		public const string ChefTweaksConfigSection = "Chef Tweaks";
 		public const string FalseSonTweaksConfigSection = "False Son Tweaks";
 
+		public static ConfigEntry<bool> Config_SeekerPalmBlastLevelDamageFix { get; set; }
+
 		public static ConfigEntry<bool> Config_SeekerReduceUnseenHandZoomout { get; set; }
 
+		public static ConfigEntry<bool> Config_SeekerReduceMeditateZoomout { get; set; }
+
 		public static ConfigEntry<bool> Config_ChefCleaverTweaks { get; set; }
+
+		public static ConfigEntry<bool> Config_ChefCleaverHoldoutTweaks { get; set; }
 
 		public static ConfigEntry<bool> Config_ChefHideCookingDebuffs { get; set; }
 
@@ -75,15 +83,31 @@ namespace MSOTSSurvivorTweaks
 
 		public static ConfigEntry<bool> Config_FalseSonMeridiansWillCameraJumpFix { get; set; }
 
+		public static ConfigEntry<bool> Config_FalseSonRemoveMeridiansWillZoomout { get; set; }
+
 		public static ConfigEntry<bool> Config_FalseSonReduceChargedLaserFatherZoomout { get; set; }
 
 		public void BindConfigs()
 		{
+			Config_SeekerReduceMeditateZoomout = Config.Bind(
+				SeekerTweaksConfigSection,
+				"Reduce Meditate Zoomout",
+				true,
+				"Reduces the camera zoomout during Meditate."
+			);
+
 			Config_SeekerReduceUnseenHandZoomout = Config.Bind(
 				SeekerTweaksConfigSection,
 				"Reduce Unseen Hand Zoomout",
 				true,
-				"Reduces the zoomout while targeting Unseen Hand."
+				"Reduces the camera zoomout while targeting Unseen Hand."
+			);
+
+			Config_SeekerPalmBlastLevelDamageFix = Config.Bind(
+				SeekerTweaksConfigSection,
+				"Fix Palm Blast Level Scaling",
+				true,
+				"Fixes Palm Blast's damage not scaling with player level."
 			);
 
 			Config_ChefCleaverTweaks = Config.Bind(
@@ -91,6 +115,13 @@ namespace MSOTSSurvivorTweaks
 				"Dice Tweaks",
 				true,
 				"Reduces the base damage of Dice from 200% to 180%, and increases the proc coefficient from 0.5 to 0.8."
+			);
+
+			Config_ChefCleaverHoldoutTweaks = Config.Bind(
+				ChefTweaksConfigSection,
+				"Dice Holdout Tweaks",
+				true,
+				"Changes Dice's lingering cleavers to deal 4x40% damage per second, with a proc coefficient of 0.5."
 			);
 
 			Config_ChefHideCookingDebuffs = Config.Bind(
@@ -151,11 +182,18 @@ namespace MSOTSSurvivorTweaks
 				"Fixes the jarring camera movement at the start of the Meridian's Will teleport ability."
 			);
 
+			Config_FalseSonRemoveMeridiansWillZoomout = Config.Bind(
+				FalseSonTweaksConfigSection,
+				"Remove Meridians Will Camera Zoomout",
+				true,
+				"Removes the camera zoomout while aiming Meridian's Will."
+			);
+
 			Config_FalseSonReduceChargedLaserFatherZoomout = Config.Bind(
 				FalseSonTweaksConfigSection,
 				"Remove Laser of the Father Zoomout",
 				true,
-				"Removes the zoomout while using Laser of the Father."
+				"Removes the camera zoomout while using Laser of the Father."
 			);
 		}
 
@@ -199,6 +237,42 @@ namespace MSOTSSurvivorTweaks
 			}
 		}
 		#endregion
+
+		private void MeridiansWillAim_OnEnter(On.EntityStates.FalseSon.MeridiansWillAim.orig_OnEnter orig, EntityStates.FalseSon.MeridiansWillAim self)
+		{
+			if (Config_FalseSonRemoveMeridiansWillZoomout.Value)
+			{
+				self.cameraTeleportPositionOffset = Vector3.zero;
+			}
+
+			orig(self);
+		}
+
+		private void PalmBlastProjectileController_Init(On.PalmBlastProjectileController.orig_Init orig, PalmBlastProjectileController self, CharacterBody body)
+		{
+			orig(self, body);
+
+			if (Config_SeekerPalmBlastLevelDamageFix.Value) 
+			{
+				self.projectileDamage.damage = body.damage;
+			}
+		}
+
+		// this one specifically is done different to all of the other seeker zoomouts so it needs an IL edit :)
+		private void ILMeditateZoomoutTweak(ILContext il)
+		{
+			if (!Config_SeekerReduceMeditateZoomout.Value)
+				return;
+
+			il.WrapILHook(cx =>
+			{
+				ILCursor c = new(cx);
+
+				c.GotoNext(x => x.MatchLdcI4((int)CameraTargetParams.AimType.ZoomedOut));
+				c.Remove();
+				c.Emit(OpCodes.Ldc_I4, (int)CameraTargetParams.AimType.Aura);
+			}, nameof(ILMeditateZoomoutTweak));
+		}
 
 		// yes i know im setting a static field in an instance hook shut up
 		private void UnseenHand_OnEnter(On.EntityStates.Seeker.UnseenHand.orig_OnEnter orig, EntityStates.Seeker.UnseenHand self)
@@ -246,6 +320,9 @@ namespace MSOTSSurvivorTweaks
 		// only part of the fix, removes the camera lerp request from OnEnter
 		private void ILMeridianTeleportCameraFix(ILContext il)
 		{
+			if (!Config_FalseSonMeridiansWillCameraJumpFix.Value)
+				return;
+
 			il.WrapILHook(x =>
 			{
 				ILCursor c = new(x);
@@ -446,6 +523,13 @@ namespace MSOTSSurvivorTweaks
 			if (Config_ChefCleaverTweaks?.Value ?? true)
 			{
 				self.projectileController.procCoefficient = 0.8f;
+			}
+
+			if (true)
+			{
+				self.IdleOverlapAttack.resetInterval = 1f / 4f;
+				self.IdleOverlapAttack.damageCoefficient = 0.2f;
+				self.IdleOverlapAttack.overlapProcCoefficient = 0.5f;
 			}
 		}
 	}
