@@ -454,10 +454,9 @@ namespace SOTSSurvivorTweaks
 			orig(self);
 		}
 
-		// its weak im afraid...
 		private void RecalculateStatsAPI_GetStatCoefficients(CharacterBody sender, RecalculateStatsAPI.StatHookEventArgs args)
 		{
-			if (!Config_ChefOiledTweaks?.Value ?? false)
+			if (!Config_ChefOiledTweaks.Value)
 				return;
 
 			if (sender.HasBuff(DLC2Content.Buffs.Oiled))
@@ -471,7 +470,7 @@ namespace SOTSSurvivorTweaks
 		// il hook: stops glaze from inflicting Weak (because im moving the effects into oiled)
 		private void ILGlazeWeakenRemoval(ILContext il)
 		{
-			if (!Config_ChefOiledTweaks?.Value ?? false)
+			if (!Config_ChefOiledTweaks.Value)
 				return;
 
 			il.WrapILHook(x =>
@@ -507,7 +506,7 @@ namespace SOTSSurvivorTweaks
 
 		private void Dice_OnEnter(On.EntityStates.Chef.Dice.orig_OnEnter orig, EntityStates.Chef.Dice self)
 		{
-			if (Config_ChefCleaverTweaks?.Value ?? true)
+			if (Config_ChefCleaverTweaks.Value)
 			{
 				self.damageCoefficient = 1.8f;
 				self.boostedDamageCoefficient = 3.6f;
@@ -520,7 +519,7 @@ namespace SOTSSurvivorTweaks
 		{
 			orig(self);
 
-			if (Config_ChefCleaverTweaks?.Value ?? true)
+			if (Config_ChefCleaverTweaks.Value)
 			{
 				self.projectileController.procCoefficient = 0.8f;
 			}
