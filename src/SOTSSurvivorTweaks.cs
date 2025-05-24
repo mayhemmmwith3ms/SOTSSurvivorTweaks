@@ -534,7 +534,8 @@ namespace SOTSSurvivorTweaks
 
 			if (Config_ChefCleaverTweaks.Value)
 			{
-				self.projectileController.procCoefficient = 0.8f;
+				self.projectileController.procCoefficient = 1f;
+				self.ImpactOverlapAttack.overlapProcCoefficient = 0.8f;
 			}
 
 			if (true)
