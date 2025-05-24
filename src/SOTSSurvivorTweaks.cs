@@ -39,6 +39,7 @@ namespace SOTSSurvivorTweaks
 			On.EntityStates.Chef.OilSpillBase.OnEnter += OilSpillBase_OnEnter;
 			On.EntityStates.Chef.YesChef.OnEnter += YesChef_OnEnter;
 			On.EntityStates.Chef.OilSpillBase.OnExit += OilSpillBase_OnExit;
+			On.RoR2.Projectile.CleaverProjectile.HandleFlyback += CleaverProjectile_HandleFlyback;
 			On.EntityStates.FalseSon.MeridiansWillTeleport.FixedUpdate += MeridiansWillTeleport_FixedUpdate;
 			On.EntityStates.FalseSon.LaserFatherCharged.OnEnter += LaserFatherCharged_OnEnter;
 			On.EntityStates.FalseSon.MeridiansWillAim.OnEnter += MeridiansWillAim_OnEnter;
@@ -502,6 +503,18 @@ namespace SOTSSurvivorTweaks
 			}
 
 			orig();
+		}
+
+		private void CleaverProjectile_HandleFlyback(On.RoR2.Projectile.CleaverProjectile.orig_HandleFlyback orig, CleaverProjectile self)
+		{
+			if (Config_ChefCleaverTweaks.Value
+				&& !self.recallDamageFired)
+			{
+				// i dont want to ilhook this so cancel out the proc coefficient multiplication here
+				self.ImpactOverlapAttack.overlapProcCoefficient /= 1.5f;
+			}
+
+			orig(self);
 		}
 
 		private void Dice_OnEnter(On.EntityStates.Chef.Dice.orig_OnEnter orig, EntityStates.Chef.Dice self)
