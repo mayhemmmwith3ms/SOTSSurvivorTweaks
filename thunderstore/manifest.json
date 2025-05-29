@@ -2,7 +2,7 @@
     "namespace": "mayhemmmwith3ms",
     "name": "SOTSSurvivorTweaks",
     "description": "A collection of fixes and gameplay tweaks for Seekers of the Storm's survivors, post-survivor update. Tweaks can be toggled individually.",
-    "version_number": "0.1.0",
+    "version_number": "0.1.1",
     "dependencies": [
         "bbepis-BepInExPack-5.4.2117",
         "RiskofThunder-R2API_Core-5.1.5",
