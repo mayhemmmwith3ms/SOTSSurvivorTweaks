@@ -7,7 +7,7 @@ namespace SOTSSurvivorTweaks;
 public static class ModUtil
 {
 	// its sooo neccessary yepp
-	public static void WrapILHook(this ILContext il, Action<ILContext> edit, string hookName)
+	public static void WrapILHook(this ILContext il, Action<ILContext> edit, string hookName, bool dump = false)
 	{
 		try
 		{
@@ -22,8 +22,11 @@ public static class ModUtil
 		}
 
 #if DEBUG
-		Log.Warning(il.ToString());
-		Log.Warning("The above is only supposed to be seen in a DEBUG build. if you're seeing this in a release version, i've FUCKED UP!");
+		if (dump)
+		{
+			Log.Warning(il.ToString());
+			Log.Warning("The above is only supposed to be seen in a DEBUG build. if you're seeing this in a release version, i've FUCKED UP!");
+		}
 #endif
 	}
 }
