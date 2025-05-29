@@ -538,7 +538,7 @@ namespace SOTSSurvivorTweaks
 				self.ImpactOverlapAttack.overlapProcCoefficient = 0.8f;
 			}
 
-			if (true)
+			if (Config_ChefCleaverHoldoutTweaks.Value)
 			{
 				self.IdleOverlapAttack.resetInterval = 1f / 4f;
 				self.IdleOverlapAttack.damageCoefficient = 0.2f;
